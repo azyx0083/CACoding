@@ -1,8 +1,12 @@
 package view;
 
+import interface_adapter.ViewManagerModel;
 import interface_adapter.logged_in.LoggedInState;
 import interface_adapter.logged_in.LoggedInViewModel;
-import interface_adapter.login.LoginState;
+import interface_adapter.login.LoginController;
+import interface_adapter.login.LoginViewModel;
+import interface_adapter.logout.LogoutController;
+import interface_adapter.logout.LogoutState;
 
 import javax.swing.*;
 import java.awt.*;
@@ -16,6 +20,12 @@ public class LoggedInView extends JPanel implements ActionListener, PropertyChan
     public final String viewName = "logged in";
     private final LoggedInViewModel loggedInViewModel;
 
+    private final LoginViewModel loginViewModel;
+
+    private final LogoutController logoutController;
+
+    private ViewManagerModel viewManagerModel;
+
     JLabel username;
 
     final JButton logOut;
@@ -23,8 +33,14 @@ public class LoggedInView extends JPanel implements ActionListener, PropertyChan
     /**
      * A window with a title and a JButton.
      */
-    public LoggedInView(LoggedInViewModel loggedInViewModel) {
+    public LoggedInView(LoggedInViewModel loggedInViewModel,
+                        LoginViewModel loginViewModel,
+                        LogoutController logoutController,
+                        ViewManagerModel viewManagerModel) {
         this.loggedInViewModel = loggedInViewModel;
+        this.loginViewModel = loginViewModel;
+        this.logoutController = logoutController;
+        this.viewManagerModel = viewManagerModel;
         this.loggedInViewModel.addPropertyChangeListener(this);
 
         JLabel title = new JLabel("Logged In Screen");
@@ -37,7 +53,16 @@ public class LoggedInView extends JPanel implements ActionListener, PropertyChan
         logOut = new JButton(loggedInViewModel.LOGOUT_BUTTON_LABEL);
         buttons.add(logOut);
 
-        logOut.addActionListener(this);
+        logOut.addActionListener(
+                new ActionListener() {
+                    @Override
+                    public void actionPerformed(ActionEvent e) {
+                        if (e.getSource().equals(logOut)) {
+                            logoutController.execute();
+                        }
+                    }
+                }
+        );
 
         this.setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
 

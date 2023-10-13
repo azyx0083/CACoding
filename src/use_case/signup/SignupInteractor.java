@@ -1,7 +1,6 @@
 package use_case.signup;
 
-import entity.User;
-import entity.UserFactory;
+import entity.*;
 
 import java.time.LocalDateTime;
 
@@ -20,10 +19,16 @@ public class SignupInteractor implements SignupInputBoundary {
 
     @Override
     public void execute(SignupInputData signupInputData) {
+        PasswordValidator passwordValidator = new PasswordValidatorService();
+        UsernameValidator usernameValidator = new UsernameValidatorService();
         if (userDataAccessObject.existsByName(signupInputData.getUsername())) {
             userPresenter.prepareFailView("User already exists.");
         } else if (!signupInputData.getPassword().equals(signupInputData.getRepeatPassword())) {
             userPresenter.prepareFailView("Passwords don't match.");
+        } else if (!usernameValidator.usernameIsValid(signupInputData.getUsername())) {
+            userPresenter.prepareFailView("Username not valid.");
+        } else if (!passwordValidator.passwordIsValid(signupInputData.getPassword())) {
+            userPresenter.prepareFailView("Password not valid.");
         } else {
 
             LocalDateTime now = LocalDateTime.now();

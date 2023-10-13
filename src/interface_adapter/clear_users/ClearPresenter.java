@@ -3,6 +3,7 @@ package interface_adapter.clear_users;
 import interface_adapter.signup.SignupState;
 import interface_adapter.signup.SignupViewModel;
 import use_case.clear_users.ClearOutputBoundary;
+import use_case.clear_users.ClearOutputData;
 
 public class ClearPresenter implements ClearOutputBoundary {
 
@@ -13,16 +14,15 @@ public class ClearPresenter implements ClearOutputBoundary {
     }
 
     @Override
-    public void prepareFailView(String error) {
+    public void prepareSuccessView(ClearOutputData message) {
         SignupState signupState = signupViewModel.getState();
-        signupState.setUsernameError(error);
+        signupState.setUsernameError(message.getMessage());
         signupViewModel.firePropertyChanged();
     }
 
-    @Override
-    public void prepareSuccessView(String message) {
+    public void prepareFailView(String error) {
         SignupState signupState = signupViewModel.getState();
-        signupState.setUsernameError(message);
+        signupState.setUsernameError(error);
         signupViewModel.firePropertyChanged();
     }
 }

@@ -1,5 +1,6 @@
 package view;
 
+import interface_adapter.cancel.CancelController;
 import interface_adapter.clear_users.ClearController;
 import interface_adapter.clear_users.ClearViewModel;
 import interface_adapter.signup.SignupController;
@@ -27,15 +28,18 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
 
     private final ClearController clearController;
 
+    private final CancelController cancelController;
+
     private final JButton signUp;
     private final JButton cancel;
     private final JButton clear;
 
-    public SignupView(SignupController controller, SignupViewModel signupViewModel, ClearController clearController) {
+    public SignupView(SignupController controller, SignupViewModel signupViewModel, ClearController clearController, CancelController cancelController) {
 
         this.signupController = controller;
         this.signupViewModel = signupViewModel;
         this.clearController = clearController;
+        this.cancelController = cancelController;
         signupViewModel.addPropertyChangeListener(this);
 
         JLabel title = new JLabel(SignupViewModel.TITLE_LABEL);
@@ -84,7 +88,14 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
                 }
         );
 
-        cancel.addActionListener(this);
+        cancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource().equals(cancel)) {
+                    cancelController.execute();
+                }
+            }
+        });
 
         // This makes a new KeyListener implementing class, instantiates it, and
         // makes it listen to keystrokes in the usernameInputField.
@@ -172,6 +183,10 @@ public class SignupView extends JPanel implements ActionListener, PropertyChange
         SignupState state = (SignupState) evt.getNewValue();
         if (state.getUsernameError() != null) {
             JOptionPane.showMessageDialog(this, state.getUsernameError());
+        } else {
+            usernameInputField.setText("");
+            passwordInputField.setText("");
+            repeatPasswordInputField.setText("");
         }
     }
 }

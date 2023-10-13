@@ -1,9 +1,11 @@
 package app;
 
 import data_access.FileUserDataAccessObject;
+import interface_adapter.cancel.CancelController;
 import interface_adapter.clear_users.ClearController;
 import interface_adapter.clear_users.ClearViewModel;
 import interface_adapter.login.LoginViewModel;
+import interface_adapter.menu.MenuViewModel;
 import interface_adapter.signup.SignupController;
 import interface_adapter.signup.SignupPresenter;
 import interface_adapter.signup.SignupViewModel;
@@ -33,7 +35,8 @@ public class SignupUseCaseFactory {
         try {
             SignupController signupController = createUserSignupUseCase(viewManagerModel, signupViewModel, loginViewModel, userDataAccessObject);
             ClearController clearController = ClearUseCaseFactory.createUserClearUseCase(signupViewModel, userDataAccessObject);
-            return new SignupView(signupController, signupViewModel, clearController);
+            CancelController cancelController = CancelUseCaseFactory.createCancelController(viewManagerModel, new MenuViewModel());
+            return new SignupView(signupController, signupViewModel, clearController, cancelController);
         } catch (IOException e) {
             JOptionPane.showMessageDialog(null, "Could not open user data file.");
         }
@@ -41,7 +44,7 @@ public class SignupUseCaseFactory {
         return null;
     }
 
-    private static SignupController createUserSignupUseCase(ViewManagerModel viewManagerModel, SignupViewModel signupViewModel, LoginViewModel loginViewModel, SignupUserDataAccessInterface userDataAccessObject) throws IOException {
+    public static SignupController createUserSignupUseCase(ViewManagerModel viewManagerModel, SignupViewModel signupViewModel, LoginViewModel loginViewModel, SignupUserDataAccessInterface userDataAccessObject) throws IOException {
 
         // Notice how we pass this method's parameters to the Presenter.
         SignupOutputBoundary signupOutputBoundary = new SignupPresenter(viewManagerModel, signupViewModel, loginViewModel);

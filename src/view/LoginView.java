@@ -1,5 +1,6 @@
 package view;
 
+import interface_adapter.cancel.CancelController;
 import interface_adapter.login.LoginController;
 import interface_adapter.login.LoginState;
 import interface_adapter.login.LoginViewModel;
@@ -29,10 +30,13 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
     final JButton cancel;
     private final LoginController loginController;
 
-    public LoginView(LoginViewModel loginViewModel, LoginController controller) {
+    private final CancelController cancelController;
+
+    public LoginView(LoginViewModel loginViewModel, LoginController controller, CancelController cancelController) {
 
         this.loginController = controller;
         this.loginViewModel = loginViewModel;
+        this.cancelController = cancelController;
         this.loginViewModel.addPropertyChangeListener(this);
 
         JLabel title = new JLabel("Login Screen");
@@ -64,7 +68,14 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
                 }
         );
 
-        cancel.addActionListener(this);
+        cancel.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                if (e.getSource().equals(cancel)) {
+                    cancelController.execute();
+                }
+            }
+        });
 
         usernameInputField.addKeyListener(new KeyListener() {
             @Override
@@ -121,10 +132,14 @@ public class LoginView extends JPanel implements ActionListener, PropertyChangeL
     public void propertyChange(PropertyChangeEvent evt) {
         LoginState state = (LoginState) evt.getNewValue();
         setFields(state);
+        if (state.getUsernameError() != null) {
+            JOptionPane.showMessageDialog(this, state.getUsernameError());
+        }
     }
 
     private void setFields(LoginState state) {
         usernameInputField.setText(state.getUsername());
+        passwordInputField.setText("");
     }
 
 }

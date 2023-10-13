@@ -18,8 +18,9 @@ public class ClearInteractor implements ClearInputBoundary{
         if (userDataAccessObject.empty()) {
             clearPresenter.prepareFailView("No user exist.");
         } else {
-            userDataAccessObject.clear();
-            clearPresenter.prepareSuccessView("All users deleted.");
+            String[] usernames = userDataAccessObject.clear();
+            ClearOutputData clearOutputData = new ClearOutputData(usernames);
+            clearPresenter.prepareSuccessView(clearOutputData);
         }
     }
 }

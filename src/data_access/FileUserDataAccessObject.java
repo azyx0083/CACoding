@@ -98,9 +98,12 @@ public class FileUserDataAccessObject implements SignupUserDataAccessInterface, 
     }
 
     @Override
-    public void clear() {
+    public String[] clear() {
+        String[] usernames;
+        usernames = accounts.keySet().toArray(new String[0]);
         accounts.clear();
         save();
+        return usernames;
     }
 
     @Override
